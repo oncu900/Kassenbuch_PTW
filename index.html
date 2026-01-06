@@ -5,37 +5,101 @@
 <title>Kassenbuch – PhysioTraining</title>
 
 <style>
-body { font-family: Arial; background:#f5f9fa; margin:0; }
-header { background:#fff; padding:20px; border-bottom:4px solid #0b6e7f; display:flex; align-items:center; }
-h1 { margin-left:20px; color:#0b6e7f; }
-.container { padding:20px; }
-input, select, button { padding:8px; margin:5px; }
-button { background:#0b6e7f; color:white; border:none; }
-table { width:100%; border-collapse:collapse; background:white; margin-top:20px; }
-th, td { border:1px solid #ccc; padding:8px; text-align:center; }
-th { background:#0b6e7f; color:white; }
-.total { margin-top:20px; font-size:20px; color:#0b6e7f; }
+:root {
+    --primary: #0b6e7f;
+    --secondary: #e85a9b;
+    --bg: #f5f9fa;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    margin: 0;
+}
+
+header {
+    background: white;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    border-bottom: 4px solid var(--primary);
+}
+
+header img {
+    height: 60px;
+}
+
+header h1 {
+    margin-left: 20px;
+    color: var(--primary);
+}
+
+.container {
+    padding: 20px;
+}
+
+input, select, button {
+    padding: 8px;
+    margin: 5px;
+}
+
+button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background: var(--secondary);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: white;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+}
+
+th {
+    background: var(--primary);
+    color: white;
+}
+
+.total {
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--primary);
+}
 </style>
 </head>
 
 <body>
 
 <header>
-<h1>Kassenbuch</h1>
+    <!-- Ändere den Link zum Logo je nach Speicherort -->
+    <img src="https://raw.githubusercontent.com/oncu900/Kassenbuch_PTW/main/LOGO_Physio-Training-com_high%20RGB_v1.jpg" alt="PhysioTraining Logo">
+    <h1>Kassenbuch</h1>
 </header>
 
 <div class="container">
 
 <select id="currency">
-<option value="CHF">CHF (Standard)</option>
-<option value="EUR">EUR</option>
+    <option value="CHF">CHF (Standard)</option>
+    <option value="EUR">EUR</option>
 </select>
-
 <span id="rateInfo"></span><br>
 
-<input id="eingang" type="number" placeholder="Eingang" step="0.01">
-<input id="ausgang" type="number" placeholder="Ausgang" step="0.01">
-<input id="bemerkung" placeholder="Bemerkung">
+<input type="number" id="eingang" placeholder="Eingang" step="0.01">
+<input type="number" id="ausgang" placeholder="Ausgang" step="0.01">
+<input type="text" id="bemerkung" placeholder="Bemerkung">
 
 <button onclick="addEntry()">Speichern</button>
 
@@ -43,92 +107,114 @@ th { background:#0b6e7f; color:white; }
 <thead>
 <tr>
 <th>Datum</th>
-<th>Eingang CHF</th>
-<th>Ausgang CHF</th>
+<th>Eingang (CHF)</th>
+<th>Ausgang (CHF)</th>
 <th>Bemerkung</th>
-<th>Saldo CHF</th>
-<th>X</th>
+<th>Saldo (CHF)</th>
+<th>Aktion</th>
 </tr>
 </thead>
 <tbody id="table"></tbody>
 </table>
 
 <div class="total">
-Kassenbestand: <span id="total">0.00</span> CHF
+Aktueller Kassenbestand: <span id="total">0.00</span> CHF
 </div>
 
 </div>
 
 <script>
+document.addEventListener("DOMContentLoaded", () => {
+
 let entries = JSON.parse(localStorage.getItem("kasse")) || [];
 let eurRate = 1;
 
-const eingang = document.getElementById("eingang");
-const ausgang = document.getElementById("ausgang");
-const bemerkung = document.getElementById("bemerkung");
-const currency = document.getElementById("currency");
+// Elemente
+const eingangInput = document.getElementById("eingang");
+const ausgangInput = document.getElementById("ausgang");
+const bemerkungInput = document.getElementById("bemerkung");
+const currencySelect = document.getElementById("currency");
 const rateInfo = document.getElementById("rateInfo");
 
-fetch("https://api.exchangerate.host/latest?base=EUR&symbols=CHF")
-.then(r => r.json())
-.then(d => {
-    eurRate = d.rates.CHF;
-    rateInfo.innerText = `1 EUR = ${eurRate.toFixed(4)} CHF`;
-})
-.catch(() => {
-    rateInfo.innerText = "Offline – EUR ohne Umrechnung";
-});
+// Wechselkurs laden (fehlerfest)
+async function loadRate() {
+    try {
+        const res = await fetch("https://api.exchangerate.host/latest?base=EUR&symbols=CHF");
+        const data = await res.json();
+        if(data?.rates?.CHF){
+            eurRate = data.rates.CHF;
+            rateInfo.innerText = `1 EUR = ${eurRate.toFixed(4)} CHF`;
+        } else {
+            rateInfo.innerText = "EUR-Kurs nicht verfügbar";
+        }
+    } catch {
+        rateInfo.innerText = "Offline – EUR ohne Umrechnung";
+    }
+}
+loadRate();
 
+// LocalStorage speichern
 function save() {
     localStorage.setItem("kasse", JSON.stringify(entries));
 }
 
+// Tabelle rendern
 function render() {
     let saldo = 0;
     let html = "";
-    entries.forEach((e,i)=>{
+
+    entries.forEach((e, i) => {
         saldo += e.eingang - e.ausgang;
-        html += `<tr>
-        <td>${e.datum}</td>
-        <td>${e.eingang.toFixed(2)}</td>
-        <td>${e.ausgang.toFixed(2)}</td>
-        <td>${e.bemerkung}</td>
-        <td>${saldo.toFixed(2)}</td>
-        <td><button onclick="removeEntry(${i})">X</button></td>
+        html += `
+        <tr>
+            <td>${e.datum}</td>
+            <td>${e.eingang.toFixed(2)}</td>
+            <td>${e.ausgang.toFixed(2)}</td>
+            <td>${e.bemerkung}</td>
+            <td>${saldo.toFixed(2)}</td>
+            <td><button onclick="removeEntry(${i})">X</button></td>
         </tr>`;
     });
+
     document.getElementById("table").innerHTML = html;
     document.getElementById("total").innerText = saldo.toFixed(2);
 }
 
-function addEntry() {
-    let e = parseFloat(eingang.value) || 0;
-    let a = parseFloat(ausgang.value) || 0;
+// Eintrag hinzufügen
+window.addEntry = function() {
+    let eingang = parseFloat(eingangInput.value) || 0;
+    let ausgang = parseFloat(ausgangInput.value) || 0;
 
-    if (currency.value === "EUR") {
-        e *= eurRate;
-        a *= eurRate;
+    if(currencySelect.value === "EUR"){
+        eingang *= eurRate;
+        ausgang *= eurRate;
     }
 
     entries.push({
         datum: new Date().toLocaleDateString("de-CH"),
-        eingang: e,
-        ausgang: a,
-        bemerkung: bemerkung.value
+        eingang,
+        ausgang,
+        bemerkung: bemerkungInput.value
     });
 
     save();
     render();
-    eingang.value = ausgang.value = bemerkung.value = "";
-}
 
-function removeEntry(i) {
-    entries.splice(i,1);
+    eingangInput.value = "";
+    ausgangInput.value = "";
+    bemerkungInput.value = "";
+};
+
+// Eintrag löschen
+window.removeEntry = function(index){
+    entries.splice(index,1);
     save();
     render();
-}
+};
 
 render();
+
+});
 </script>
 
 </body>
