@@ -5,151 +5,177 @@
 <title>Kassenbuch – PhysioTraining</title>
 
 <style>
-:root {
-    --primary: #0b6e7f;
-    --secondary: #e85a9b;
-    --bg: #f2f6f8;
-    --card: #ffffff;
-    --text: #2c3e50;
-    --border: #dde5ea;
+:root{
+    --primary:#0b6e7f;
+    --secondary:#e85a9b;
+    --bg:#f2f6f8;
+    --card:#ffffff;
+    --text:#2c3e50;
+    --border:#dde5ea;
 }
 
-* { box-sizing: border-box; }
+*{box-sizing:border-box}
 
-body {
-    margin: 0;
-    font-family: "Segoe UI", Roboto, Arial, sans-serif;
-    background: var(--bg);
-    color: var(--text);
+body{
+    margin:0;
+    font-family:"Segoe UI",Roboto,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
 }
 
-/* Header */
-header {
-    background: var(--card);
-    padding: 20px 30px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    border-bottom: 4px solid var(--primary);
+/* HEADER */
+header{
+    background:var(--card);
+    padding:20px 30px;
+    display:flex;
+    align-items:center;
+    gap:20px;
+    border-bottom:4px solid var(--primary);
 }
 
-header img { height: 55px; }
-header h1 { margin: 0; color: var(--primary); }
+header img{height:55px}
+header h1{margin:0;color:var(--primary)}
 
-/* Layout */
-.container {
-    max-width: 1100px;
-    margin: 30px auto;
-    padding: 0 20px;
-    display: grid;
-    gap: 25px;
+/* LAYOUT */
+.container{
+    max-width:1100px;
+    margin:30px auto;
+    padding:0 20px;
+    display:grid;
+    gap:25px;
 }
 
-/* Cards */
-.card {
-    background: var(--card);
-    border-radius: 10px;
-    padding: 20px 25px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+/* CARD */
+.card{
+    background:var(--card);
+    border-radius:12px;
+    padding:25px;
+    box-shadow:0 6px 18px rgba(0,0,0,.06);
 }
 
-/* Controls */
-label {
-    font-size: 14px;
-    font-weight: 600;
+/* FORM */
+label{
+    font-size:14px;
+    font-weight:600;
 }
 
-select, input {
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    font-size: 15px;
+select,input{
+    padding:10px;
+    border-radius:6px;
+    border:1px solid var(--border);
+    font-size:15px;
 }
 
-input:focus, select:focus {
-    outline: none;
-    border-color: var(--primary);
+input:focus,select:focus{
+    outline:none;
+    border-color:var(--primary);
 }
 
-/* Denominations */
-.denoms {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(90px,1fr));
-    gap: 12px;
-    margin-top: 15px;
+/* DENOMS */
+.denoms{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(90px,1fr));
+    gap:15px;
+    margin-top:15px;
 }
 
-.denom {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+.denom{
+    background:#f7fafc;
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:10px;
+    text-align:center;
 }
 
-.denom span {
-    font-size: 13px;
-    text-align: center;
+.denom span{
+    font-weight:600;
+    font-size:14px;
 }
 
-/* Buttons */
-.buttons {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-    margin-top: 15px;
+.denom input{
+    margin-top:5px;
+    width:100%;
+    text-align:center;
 }
 
-button {
-    padding: 12px 18px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 600;
+/* BUTTONS */
+.buttons{
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+    margin-top:20px;
 }
 
-.primary {
-    background: var(--primary);
-    color: white;
+button{
+    padding:12px 18px;
+    border-radius:8px;
+    border:none;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:600;
 }
 
-.secondary {
-    background: #ecf4f6;
-    color: var(--primary);
+.primary{background:var(--primary);color:white}
+.secondary{background:#ecf4f6;color:var(--primary)}
+button:hover{opacity:.9}
+
+/* TABLE */
+table{
+    width:100%;
+    border-collapse:collapse;
 }
 
-button:hover { opacity: 0.9; }
-
-/* Table */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
+th,td{
+    padding:14px 10px;
+    border-bottom:1px solid var(--border);
+    text-align:center;
 }
 
-th, td {
-    padding: 14px 10px;
-    border-bottom: 1px solid var(--border);
-    text-align: center;
+th{
+    background:#f7fafc;
+    color:var(--primary);
 }
 
-th {
-    background: #f7fafc;
-    color: var(--primary);
-    font-weight: 700;
+/* TOTAL */
+.total{
+    display:flex;
+    justify-content:space-between;
+    font-size:22px;
+    font-weight:700;
+    color:var(--primary);
 }
 
-tbody tr:hover {
-    background: #f2f8fa;
+/* MODAL */
+.modal-bg{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.4);
+    display:none;
+    align-items:center;
+    justify-content:center;
 }
 
-/* Total */
-.total {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--primary);
+.modal{
+    background:white;
+    border-radius:12px;
+    padding:25px;
+    width:90%;
+    max-width:500px;
+    box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+
+.modal h3{
+    margin-top:0;
+    color:var(--primary);
+}
+
+.modal table{
+    margin-top:15px;
+}
+
+.modal-close{
+    margin-top:20px;
+    width:100%;
 }
 </style>
 </head>
@@ -157,36 +183,33 @@ tbody tr:hover {
 <body>
 
 <header>
-    <img src="https://raw.githubusercontent.com/oncu900/Kassenbuch_PTW/main/LOGO_Physio-Training-com_high%20RGB_v1.jpg">
-    <h1>Kassenbuch</h1>
+<img src="https://raw.githubusercontent.com/oncu900/Kassenbuch_PTW/main/LOGO_Physio-Training-com_high%20RGB_v1.jpg">
+<h1>Kassenbuch</h1>
 </header>
 
 <div class="container">
 
-<!-- Währung -->
 <div class="card">
-    <label>Währung</label><br><br>
-    <select id="currency">
-        <option value="CHF">CHF</option>
-        <option value="EUR">EUR</option>
-    </select>
-    <span id="rateInfo" style="margin-left:15px; font-size:14px;"></span>
+<label>Währung</label><br><br>
+<select id="currency">
+<option value="CHF">CHF</option>
+<option value="EUR">EUR</option>
+</select>
+<span id="rateInfo" style="margin-left:15px;font-size:14px;"></span>
 </div>
 
-<!-- Eingabe -->
 <div class="card">
-    <h3>Eingang – Noten & Münzen</h3>
-    <div id="denoms" class="denoms"></div>
+<h3>Eingang – Noten & Münzen</h3>
+<div id="denoms" class="denoms"></div>
 
-    <input type="text" id="bemerkung" placeholder="Bemerkung" style="margin-top:15px; width:100%;">
+<input id="bemerkung" placeholder="Bemerkung" style="margin-top:15px;width:100%">
 
-    <div class="buttons">
-        <button class="primary" onclick="addEntry()">Speichern</button>
-        <button class="secondary" onclick="showDenoms()">Noten & Münzen anzeigen</button>
-    </div>
+<div class="buttons">
+<button class="primary" onclick="addEntry()">Speichern</button>
+<button class="secondary" onclick="openModal()">Noten & Münzen anzeigen</button>
+</div>
 </div>
 
-<!-- Tabelle -->
 <div class="card">
 <table>
 <thead>
@@ -202,20 +225,27 @@ tbody tr:hover {
 </table>
 </div>
 
-<!-- Total -->
 <div class="card total">
-    <span>Aktueller Kassenbestand</span>
-    <span id="total">0.00 CHF</span>
+<span>Aktueller Kassenbestand</span>
+<span id="total">0.00 CHF</span>
 </div>
 
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal">
+<div class="modal">
+<h3>Noten & Münzen Bestand</h3>
+<div id="modalContent"></div>
+<button class="primary modal-close" onclick="closeModal()">Schliessen</button>
+</div>
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-
 const CHF=[200,100,50,20,10,5,2,1,0.5,0.2,0.1,0.05];
 const EUR=[500,200,100,50,20,10,5,2,1,0.5,0.2,0.1,0.05];
 let eurRate=1;
+
 let entries=JSON.parse(localStorage.getItem("kasse"))||[];
 let stock=JSON.parse(localStorage.getItem("stock"))||{};
 
@@ -223,88 +253,90 @@ const denomsDiv=document.getElementById("denoms");
 const currency=document.getElementById("currency");
 
 async function loadRate(){
-    try{
-        const r=await fetch("https://api.exchangerate.host/latest?base=EUR&symbols=CHF");
-        eurRate=(await r.json()).rates.CHF;
-        rateInfo.innerText=`1 EUR = ${eurRate.toFixed(4)} CHF`;
-    }catch{
-        rateInfo.innerText="Offline – EUR ohne Umrechnung";
-    }
-}
+try{
+const r=await fetch("https://api.exchangerate.host/latest?base=EUR&symbols=CHF");
+eurRate=(await r.json()).rates.CHF;
+rateInfo.innerText=`1 EUR = ${eurRate.toFixed(4)} CHF`;
+}catch{
+rateInfo.innerText="Offline – EUR ohne Umrechnung";
+}}
 loadRate();
 
 function renderDenoms(){
-    denomsDiv.innerHTML="";
-    (currency.value==="CHF"?CHF:EUR).forEach(v=>{
-        denomsDiv.innerHTML+=`
-        <div class="denom">
-            <span>${v}</span>
-            <input type="number" min="0" data-val="${v}">
-        </div>`;
-    });
+denomsDiv.innerHTML="";
+(currency.value==="CHF"?CHF:EUR).forEach(v=>{
+denomsDiv.innerHTML+=`
+<div class="denom">
+<span>${v}</span>
+<input type="number" min="0" data-val="${v}">
+</div>`;
+});
 }
 currency.onchange=renderDenoms;
 renderDenoms();
 
-window.addEntry=function(){
-    let sum=0, cur=currency.value;
-    document.querySelectorAll(".denom input").forEach(i=>{
-        let c=+i.value||0, v=+i.dataset.val;
-        if(c){
-            let chf=cur==="EUR"?v*eurRate:v;
-            sum+=c*chf;
-            stock[cur]??={};
-            stock[cur][v]=(stock[cur][v]||0)+c;
-        }
-    });
-
-    entries.push({
-        datum:new Date().toLocaleDateString("de-CH"),
-        eingang:sum,
-        bemerkung:bemerkung.value
-    });
-
-    localStorage.setItem("kasse",JSON.stringify(entries));
-    localStorage.setItem("stock",JSON.stringify(stock));
-    bemerkung.value="";
-    renderDenoms();
-    render();
-};
-
-window.showDenoms=function(){
-    let t="";
-    for(let c in stock){
-        t+=`\n${c}\n`;
-        for(let v in stock[c]) t+=`${v}: ${stock[c][v]}x\n`;
-    }
-    alert(t||"Keine Daten");
-};
-
-window.removeEntry=function(i){
-    entries.splice(i,1);
-    localStorage.setItem("kasse",JSON.stringify(entries));
-    render();
-};
+function addEntry(){
+let sum=0,cur=currency.value;
+document.querySelectorAll(".denom input").forEach(i=>{
+let c=+i.value||0,v=+i.dataset.val;
+if(c){
+let chf=cur==="EUR"?v*eurRate:v;
+sum+=c*chf;
+stock[cur]??={};
+stock[cur][v]=(stock[cur][v]||0)+c;
+}
+});
+entries.push({
+datum:new Date().toLocaleDateString("de-CH"),
+eingang:sum,
+bemerkung:bemerkung.value
+});
+localStorage.setItem("kasse",JSON.stringify(entries));
+localStorage.setItem("stock",JSON.stringify(stock));
+bemerkung.value="";
+renderDenoms();
+render();
+}
 
 function render(){
-    let saldo=0, html="";
-    entries.forEach((e,i)=>{
-        saldo+=e.eingang;
-        html+=`
-        <tr>
-            <td>${e.datum}</td>
-            <td>${e.eingang.toFixed(2)}</td>
-            <td>${e.bemerkung}</td>
-            <td>${saldo.toFixed(2)}</td>
-            <td><button onclick="removeEntry(${i})">✕</button></td>
-        </tr>`;
-    });
-    table.innerHTML=html;
-    total.innerText=saldo.toFixed(2)+" CHF";
+let saldo=0,html="";
+entries.forEach((e,i)=>{
+saldo+=e.eingang;
+html+=`
+<tr>
+<td>${e.datum}</td>
+<td>${e.eingang.toFixed(2)}</td>
+<td>${e.bemerkung}</td>
+<td>${saldo.toFixed(2)}</td>
+<td><button onclick="removeEntry(${i})">✕</button></td>
+</tr>`;
+});
+table.innerHTML=html;
+total.innerText=saldo.toFixed(2)+" CHF";
+}
+function removeEntry(i){
+entries.splice(i,1);
+localStorage.setItem("kasse",JSON.stringify(entries));
+render();
 }
 render();
 
-});
+/* MODAL */
+function openModal(){
+let html="";
+for(let c in stock){
+html+=`<h4>${c}</h4><table>`;
+for(let v in stock[c]){
+html+=`<tr><td>${v}</td><td>${stock[c][v]}x</td></tr>`;
+}
+html+="</table>";
+}
+modalContent.innerHTML=html||"Keine Daten";
+modal.style.display="flex";
+}
+function closeModal(){
+modal.style.display="none";
+}
 </script>
 
 </body>
