@@ -5,101 +5,37 @@
 <title>Kassenbuch – PhysioTraining</title>
 
 <style>
-:root {
-    --primary: #0b6e7f;
-    --secondary: #e85a9b;
-    --bg: #f5f9fa;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    background: var(--bg);
-    margin: 0;
-}
-
-header {
-    background: white;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    border-bottom: 4px solid var(--primary);
-}
-
-header img {
-    height: 60px;
-}
-
-header h1 {
-    margin-left: 20px;
-    color: var(--primary);
-}
-
-.container {
-    padding: 20px;
-}
-
-input, select, button {
-    padding: 8px;
-    margin: 5px;
-}
-
-button {
-    background: var(--primary);
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-button:hover {
-    background: var(--secondary);
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    background: white;
-}
-
-th, td {
-    border: 1px solid #ccc;
-    padding: 8px;
-    text-align: center;
-}
-
-th {
-    background: var(--primary);
-    color: white;
-}
-
-.total {
-    margin-top: 20px;
-    font-size: 20px;
-    font-weight: bold;
-    color: var(--primary);
-}
+body { font-family: Arial; background:#f5f9fa; margin:0; }
+header { background:#fff; padding:20px; border-bottom:4px solid #0b6e7f; display:flex; align-items:center; }
+h1 { margin-left:20px; color:#0b6e7f; }
+.container { padding:20px; }
+input, select, button { padding:8px; margin:5px; }
+button { background:#0b6e7f; color:white; border:none; }
+table { width:100%; border-collapse:collapse; background:white; margin-top:20px; }
+th, td { border:1px solid #ccc; padding:8px; text-align:center; }
+th { background:#0b6e7f; color:white; }
+.total { margin-top:20px; font-size:20px; color:#0b6e7f; }
 </style>
 </head>
 
 <body>
 
 <header>
-    <img src="LOGO_Physio-Training-com_high RGB_v1.jpg">
-    <h1>Kassenbuch</h1>
+<h1>Kassenbuch</h1>
 </header>
 
 <div class="container">
 
 <select id="currency">
-    <option value="CHF">CHF (Standard)</option>
-    <option value="EUR">EUR</option>
+<option value="CHF">CHF (Standard)</option>
+<option value="EUR">EUR</option>
 </select>
 
 <span id="rateInfo"></span><br>
 
-<input type="number" id="eingang" placeholder="Eingang" step="0.01">
-<input type="number" id="ausgang" placeholder="Ausgang" step="0.01">
-<input type="text" id="bemerkung" placeholder="Bemerkung">
+<input id="eingang" type="number" placeholder="Eingang" step="0.01">
+<input id="ausgang" type="number" placeholder="Ausgang" step="0.01">
+<input id="bemerkung" placeholder="Bemerkung">
 
 <button onclick="addEntry()">Speichern</button>
 
@@ -107,18 +43,18 @@ th {
 <thead>
 <tr>
 <th>Datum</th>
-<th>Eingang (CHF)</th>
-<th>Ausgang (CHF)</th>
+<th>Eingang CHF</th>
+<th>Ausgang CHF</th>
 <th>Bemerkung</th>
-<th>Saldo (CHF)</th>
-<th>Aktion</th>
+<th>Saldo CHF</th>
+<th>X</th>
 </tr>
 </thead>
 <tbody id="table"></tbody>
 </table>
 
 <div class="total">
-Aktueller Kassenbestand: <span id="total">0.00</span> CHF
+Kassenbestand: <span id="total">0.00</span> CHF
 </div>
 
 </div>
@@ -127,15 +63,21 @@ Aktueller Kassenbestand: <span id="total">0.00</span> CHF
 let entries = JSON.parse(localStorage.getItem("kasse")) || [];
 let eurRate = 1;
 
-// Wechselkurs laden
-async function loadRate() {
-    const res = await fetch("https://api.exchangerate.host/latest?base=EUR&symbols=CHF");
-    const data = await res.json();
-    eurRate = data.rates.CHF;
-    document.getElementById("rateInfo").innerText =
-        `Aktueller Kurs: 1 EUR = ${eurRate.toFixed(4)} CHF`;
-}
-loadRate();
+const eingang = document.getElementById("eingang");
+const ausgang = document.getElementById("ausgang");
+const bemerkung = document.getElementById("bemerkung");
+const currency = document.getElementById("currency");
+const rateInfo = document.getElementById("rateInfo");
+
+fetch("https://api.exchangerate.host/latest?base=EUR&symbols=CHF")
+.then(r => r.json())
+.then(d => {
+    eurRate = d.rates.CHF;
+    rateInfo.innerText = `1 EUR = ${eurRate.toFixed(4)} CHF`;
+})
+.catch(() => {
+    rateInfo.innerText = "Offline – EUR ohne Umrechnung";
+});
 
 function save() {
     localStorage.setItem("kasse", JSON.stringify(entries));
@@ -144,60 +86,47 @@ function save() {
 function render() {
     let saldo = 0;
     let html = "";
-
-    entries.forEach((e, i) => {
+    entries.forEach((e,i)=>{
         saldo += e.eingang - e.ausgang;
-        html += `
-        <tr>
-            <td>${e.datum}</td>
-            <td>${e.eingang.toFixed(2)}</td>
-            <td>${e.ausgang.toFixed(2)}</td>
-            <td>${e.bemerkung}</td>
-            <td>${saldo.toFixed(2)}</td>
-            <td><button onclick="remove(${i})">X</button></td>
+        html += `<tr>
+        <td>${e.datum}</td>
+        <td>${e.eingang.toFixed(2)}</td>
+        <td>${e.ausgang.toFixed(2)}</td>
+        <td>${e.bemerkung}</td>
+        <td>${saldo.toFixed(2)}</td>
+        <td><button onclick="removeEntry(${i})">X</button></td>
         </tr>`;
     });
-
     document.getElementById("table").innerHTML = html;
     document.getElementById("total").innerText = saldo.toFixed(2);
 }
 
 function addEntry() {
-    let eingang = parseFloat(eingangInput.value) || 0;
-    let ausgang = parseFloat(ausgangInput.value) || 0;
-    const currency = currencySelect.value;
+    let e = parseFloat(eingang.value) || 0;
+    let a = parseFloat(ausgang.value) || 0;
 
-    // Umrechnung nach CHF
-    if (currency === "EUR") {
-        eingang *= eurRate;
-        ausgang *= eurRate;
+    if (currency.value === "EUR") {
+        e *= eurRate;
+        a *= eurRate;
     }
 
     entries.push({
         datum: new Date().toLocaleDateString("de-CH"),
-        eingang,
-        ausgang,
-        bemerkung: bemerkungInput.value
+        eingang: e,
+        ausgang: a,
+        bemerkung: bemerkung.value
     });
 
     save();
     render();
-
-    eingangInput.value = "";
-    ausgangInput.value = "";
-    bemerkungInput.value = "";
+    eingang.value = ausgang.value = bemerkung.value = "";
 }
 
-function remove(index) {
-    entries.splice(index, 1);
+function removeEntry(i) {
+    entries.splice(i,1);
     save();
     render();
 }
-
-const eingangInput = document.getElementById("eingang");
-const ausgangInput = document.getElementById("ausgang");
-const bemerkungInput = document.getElementById("bemerkung");
-const currencySelect = document.getElementById("currency");
 
 render();
 </script>
